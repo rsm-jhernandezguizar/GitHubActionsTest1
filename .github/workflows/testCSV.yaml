@@ -16,14 +16,17 @@ jobs:
       - name: Display Hello World and Create CSV
         run: |
           # Define a unique filename with the desired format
-          filename="Hello_World_Workflow_Test_$(date +'%Y%m%d_%H%M%S').csv"
-
+          export filename="Hello_World_Workflow_Test_$(date +'%Y%m%d_%H%M%S').csv"
+          
           # Create a new CSV file with the message, date, and time
           echo "Message,Date and Time" > $filename
           echo "Hello, world!,$(date)" >> $filename
+          
+          # Save filename to environment for use in the next step
+          echo "filename=$filename" >> $GITHUB_ENV
 
       - name: Upload CSV log
         uses: actions/upload-artifact@v4  # Updated to the latest version
         with:
           name: hello_world_log_${{ github.run_id }}
-          path: ${{ filename }}  # Reference the dynamically created filename
+          path: ${{ env.filename }}  # Use the environment variable for the filename
